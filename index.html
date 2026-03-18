@@ -12,126 +12,161 @@
 <body>
 
   <main class="app-container">
-
-    <!-- ===================== -->
-    <!-- HEADER -->
-    <!-- ===================== -->
     <header class="app-header">
       <h1>📅 Partidos CBAT</h1>
     </header>
 
-    <!-- ===================== -->
-    <!-- CALENDARIO / JORNADA -->
-    <!-- ===================== -->
-    <section class="panel panel-calendar">
+    <div class="tabs-shell">
+      <input class="tabs-control" type="radio" name="main-tab" id="tab-jornadas-control" checked>
+      <input class="tabs-control" type="radio" name="main-tab" id="tab-equipos-control">
 
-      <div class="panel-header">
-        <h2>Calendario y jornada</h2>
+      <nav class="tabs-nav" aria-label="Secciones principales">
+        <label class="tab-btn" for="tab-jornadas-control" data-tab-target="tab-jornadas">Jornadas / Calendario</label>
+        <label class="tab-btn" for="tab-equipos-control" data-tab-target="tab-equipos">Equipos</label>
+      </nav>
+
+      <div class="tabs-panels">
+        <section id="tab-jornadas" class="tab-panel" data-tab-panel="jornadas">
+          <section class="panel panel-calendar">
+            <div class="panel-header">
+              <h2>Calendario y jornada</h2>
+            </div>
+
+            <div class="calendar-controls">
+              <div class="control-group">
+                <label for="jornada">Jornada</label>
+                <select id="jornada"></select>
+              </div>
+
+              <div class="control-group">
+                <label for="fecha">Fecha</label>
+                <input type="date" id="fecha">
+              </div>
+
+              <div class="control-group buttons-inline">
+                <button class="btn" id="btn-hoy" type="button">Hoy</button>
+              </div>
+            </div>
+          </section>
+
+          <section class="panel panel-filtros">
+            <div class="panel-header">
+              <h2>Filtros</h2>
+            </div>
+
+            <div class="filters">
+              <div class="control-group">
+                <label for="categoria">Categoría</label>
+                <select id="categoria">
+                  <option value="">Todas</option>
+                </select>
+              </div>
+            </div>
+          </section>
+
+          <section class="panel panel-contadores">
+            <div class="panel-header">
+              <h2>Resumen</h2>
+            </div>
+
+            <div class="contadores">
+              <div class="contador">
+                <span id="total">0</span>
+                <p>Total</p>
+              </div>
+
+              <div class="contador">
+                <span id="casa">0</span>
+                <p>Casa</p>
+              </div>
+
+              <div class="contador">
+                <span id="fuera">0</span>
+                <p>Fuera</p>
+              </div>
+            </div>
+          </section>
+
+          <section class="panel panel-partidos">
+            <div class="panel-header">
+              <h2>Partidos</h2>
+            </div>
+
+            <div class="tabla-partidos header">
+              <div>Fecha</div>
+              <div>Partido</div>
+              <div>Hora</div>
+              <div>Pabellón / pista</div>
+            </div>
+
+            <div id="partidos-list" class="lista-partidos"></div>
+          </section>
+
+          <section class="panel panel-share">
+            <button id="btn-compartir" class="btn btn-primary" type="button">
+              📲 Compartir jornada
+            </button>
+          </section>
+        </section>
+
+        <section id="tab-equipos" class="tab-panel" data-tab-panel="equipos">
+          <section class="panel panel-filtros panel-equipos-filtro">
+            <div class="panel-header">
+              <h2>Equipos</h2>
+            </div>
+
+            <div class="filters">
+              <div class="control-group">
+                <label for="equipo">Equipo</label>
+                <select id="equipo">
+                  <option value="">Todos</option>
+                </select>
+              </div>
+            </div>
+          </section>
+
+          <section class="panel panel-contadores">
+            <div class="panel-header">
+              <h2>Resumen por equipo</h2>
+            </div>
+
+            <div class="contadores">
+              <div class="contador">
+                <span>0</span>
+                <p>Total</p>
+              </div>
+
+              <div class="contador">
+                <span>0</span>
+                <p>Casa</p>
+              </div>
+
+              <div class="contador">
+                <span>0</span>
+                <p>Fuera</p>
+              </div>
+            </div>
+          </section>
+
+          <section class="panel panel-partidos panel-partidos-equipo">
+            <div class="panel-header">
+              <h2>Partidos del equipo</h2>
+            </div>
+
+            <div class="tabla-partidos header">
+              <div>Fecha</div>
+              <div>Partido</div>
+              <div>Hora</div>
+              <div>Pabellón / pista</div>
+            </div>
+
+            <div class="lista-partidos lista-partidos-equipo">
+              <div class="partido partido-empty">Selecciona un equipo para ver sus partidos.</div>
+            </div>
+          </section>
+        </section>
       </div>
-
-      <div class="calendar-controls">
-
-        <div class="control-group">
-          <label>Jornada</label>
-          <select id="jornada"></select>
-        </div>
-
-        <div class="control-group">
-          <label>Fecha</label>
-          <input type="date" id="fecha">
-        </div>
-
-        <div class="control-group buttons-inline">
-          <button class="btn" id="btn-hoy">Hoy</button>
-        </div>
-
-      </div>
-
-    </section>
-
-    <!-- ===================== -->
-    <!-- FILTROS -->
-    <!-- ===================== -->
-    <section class="panel panel-filtros">
-
-      <div class="panel-header">
-        <h2>Filtros</h2>
-      </div>
-
-      <div class="filters">
-
-        <div class="control-group">
-          <label>Equipo</label>
-          <select id="equipo">
-            <option value="">Todos</option>
-          </select>
-        </div>
-
-      </div>
-
-    </section>
-
-    <!-- ===================== -->
-    <!-- CONTADORES -->
-    <!-- ===================== -->
-    <section class="panel panel-contadores">
-
-      <div class="panel-header">
-        <h2>Resumen</h2>
-      </div>
-
-      <div class="contadores">
-
-        <div class="contador">
-          <span id="total">0</span>
-          <p>Total</p>
-        </div>
-
-        <div class="contador">
-          <span id="casa">0</span>
-          <p>Casa</p>
-        </div>
-
-        <div class="contador">
-          <span id="fuera">0</span>
-          <p>Fuera</p>
-        </div>
-
-      </div>
-
-    </section>
-
-    <!-- ===================== -->
-    <!-- PARTIDOS -->
-    <!-- ===================== -->
-    <section class="panel panel-partidos">
-
-      <div class="panel-header">
-        <h2>Partidos</h2>
-      </div>
-
-      <div class="tabla-partidos header">
-        <div>Fecha</div>
-        <div>Partido</div>
-        <div>Hora</div>
-        <div>Pabellón / pista</div>
-      </div>
-
-      <div id="partidos-list" class="lista-partidos"></div>
-
-    </section>
-
-    <!-- ===================== -->
-    <!-- COMPARTIR -->
-    <!-- ===================== -->
-    <section class="panel panel-share">
-
-      <button id="btn-compartir" class="btn btn-primary">
-        📲 Compartir jornada
-      </button>
-
-    </section>
-
+    </div>
   </main>
 
   <!-- JS -->

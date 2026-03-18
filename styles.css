@@ -24,6 +24,50 @@ body {
   font-size: 1.5rem;
 }
 
+.tabs-shell {
+  width: 100%;
+}
+
+.tabs-control {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.tabs-nav {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.tab-btn {
+  border: 1px solid #d5dae1;
+  border-radius: 10px;
+  background: #fff;
+  color: #374151;
+  font-weight: 600;
+  padding: 10px 12px;
+  cursor: pointer;
+  text-align: center;
+}
+
+#tab-jornadas-control:checked ~ .tabs-nav label[for="tab-jornadas-control"],
+#tab-equipos-control:checked ~ .tabs-nav label[for="tab-equipos-control"] {
+  background: #1f2937;
+  color: #fff;
+  border-color: #1f2937;
+}
+
+.tab-panel {
+  display: none;
+}
+
+#tab-jornadas-control:checked ~ .tabs-panels #tab-jornadas,
+#tab-equipos-control:checked ~ .tabs-panels #tab-equipos {
+  display: block;
+}
+
 .panel {
   background: #fff;
   border: 1px solid #e5e7eb;
@@ -169,11 +213,7 @@ input {
     gap: 6px;
   }
 
-  .col-fecha::before,
-  .col-partido::before,
-  .col-hora::before,
-  .col-pabellon::before {
-    content: attr(class);
-    display: none;
+  .tabs-nav {
+    grid-template-columns: 1fr;
   }
 }
