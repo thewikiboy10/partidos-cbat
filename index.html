@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>CBAT - Calendario</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- CSS -->
+  <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+
+  <main class="app-container">
+
+    <!-- ===================== -->
+    <!-- HEADER -->
+    <!-- ===================== -->
+    <header class="app-header">
+      <h1>📅 Partidos CBAT</h1>
+    </header>
+
+    <!-- ===================== -->
+    <!-- CALENDARIO / JORNADA -->
+    <!-- ===================== -->
+    <section class="panel panel-calendar">
+
+      <div class="panel-header">
+        <h2>Calendario y jornada</h2>
+      </div>
+
+      <div class="calendar-controls">
+
+        <div class="control-group">
+          <label>Jornada</label>
+          <select id="selector-jornada"></select>
+        </div>
+
+        <div class="control-group">
+          <label>Fecha</label>
+          <input type="date" id="selector-fecha">
+        </div>
+
+        <div class="control-group buttons-inline">
+          <button class="btn" id="btn-hoy">Hoy</button>
+        </div>
+
+      </div>
+
+    </section>
+
+    <!-- ===================== -->
+    <!-- FILTROS -->
+    <!-- ===================== -->
+    <section class="panel panel-filtros">
+
+      <div class="panel-header">
+        <h2>Filtros</h2>
+      </div>
+
+      <div class="filters">
+
+        <div class="control-group">
+          <label>Equipo</label>
+          <select id="selector-equipo">
+            <option value="">Todos</option>
+          </select>
+        </div>
+
+      </div>
+
+    </section>
+
+    <!-- ===================== -->
+    <!-- CONTADORES -->
+    <!-- ===================== -->
+    <section class="panel panel-contadores">
+
+      <div class="panel-header">
+        <h2>Resumen</h2>
+      </div>
+
+      <div class="contadores">
+
+        <div class="contador">
+          <span id="contador-total">0</span>
+          <p>Total</p>
+        </div>
+
+        <div class="contador">
+          <span id="contador-casa">0</span>
+          <p>Casa</p>
+        </div>
+
+        <div class="contador">
+          <span id="contador-fuera">0</span>
+          <p>Fuera</p>
+        </div>
+
+      </div>
+
+    </section>
+
+    <!-- ===================== -->
+    <!-- PARTIDOS -->
+    <!-- ===================== -->
+    <section class="panel panel-partidos">
+
+      <div class="panel-header">
+        <h2>Partidos</h2>
+      </div>
+
+      <div class="tabla-partidos header">
+        <div>Fecha</div>
+        <div>Partido</div>
+        <div>Info</div>
+      </div>
+
+      <div id="lista-partidos" class="lista-partidos"></div>
+
+    </section>
+
+    <!-- ===================== -->
+    <!-- COMPARTIR -->
+    <!-- ===================== -->
+    <section class="panel panel-share">
+
+      <button id="btn-compartir" class="btn btn-primary">
+        📲 Compartir jornada
+      </button>
+
+    </section>
+
+  </main>
+
+  <!-- JS -->
+  <script src="app.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,259 @@
+/* RESET BÁSICO */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: system-ui, -apple-system, Arial, sans-serif;
+}
+
+body {
+  background: #f4f6f8;
+  color: #1a1a1a;
+}
+
+/* CONTENEDOR GENERAL */
+.app {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 16px;
+}
+
+/* HEADER */
+.top-header {
+  margin-bottom: 16px;
+}
+
+.top-header h1 {
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.top-header p {
+  font-size: 13px;
+  color: #666;
+}
+
+/* NAV */
+.top-nav {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.nav-tab {
+  flex: 1;
+  padding: 10px;
+  border-radius: 10px;
+  border: none;
+  background: #e9edf1;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.nav-tab.active {
+  background: #111;
+  color: white;
+}
+
+/* PANEL GENERAL */
+.panel {
+  background: white;
+  border-radius: 14px;
+  padding: 16px;
+  margin-bottom: 16px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+}
+
+.panel-header {
+  margin-bottom: 12px;
+}
+
+.panel-header h2 {
+  font-size: 16px;
+}
+
+/* CONTROLES */
+.calendar-controls,
+.filters-grid {
+  display: grid;
+  gap: 10px;
+}
+
+.control-group {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.control-group label {
+  font-size: 12px;
+  color: #666;
+}
+
+select,
+input {
+  padding: 8px;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+}
+
+.buttons-inline {
+  display: flex;
+  gap: 8px;
+}
+
+.btn {
+  flex: 1;
+  padding: 10px;
+  border-radius: 10px;
+  border: none;
+  background: #111;
+  color: white;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.btn:hover {
+  opacity: 0.9;
+}
+
+/* CONTADORES */
+.counters-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+}
+
+.counter-card {
+  background: #f7f9fb;
+  border-radius: 12px;
+  padding: 12px;
+  text-align: center;
+}
+
+.counter-number {
+  font-size: 20px;
+  font-weight: bold;
+}
+
+.counter-label {
+  font-size: 12px;
+  color: #666;
+}
+
+/* PARTIDOS */
+.matches-section {
+  margin-bottom: 16px;
+}
+
+.section-header {
+  margin-bottom: 10px;
+}
+
+.matches-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* TARJETA PARTIDO */
+.match-card {
+  display: flex;
+  gap: 12px;
+  background: white;
+  padding: 12px;
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.04);
+}
+
+/* FECHA */
+.match-date {
+  min-width: 60px;
+  text-align: center;
+  font-weight: bold;
+}
+
+.match-date .day {
+  font-size: 12px;
+  color: #666;
+}
+
+.match-date .date {
+  font-size: 16px;
+}
+
+/* INFO */
+.match-info h3 {
+  font-size: 14px;
+  margin-bottom: 4px;
+}
+
+.match-meta {
+  font-size: 12px;
+  color: #666;
+  margin-bottom: 6px;
+}
+
+/* TAGS */
+.match-tags {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.tag {
+  font-size: 11px;
+  padding: 4px 6px;
+  border-radius: 6px;
+  background: #eee;
+}
+
+.tag.home {
+  background: #d4f8d4;
+  color: #0a7a0a;
+}
+
+.tag.away {
+  background: #ffe0e0;
+  color: #a00000;
+}
+
+/* SHARE */
+.share-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.btn-share {
+  background: #007bff;
+}
+
+/* EMPTY STATE */
+.empty-state {
+  text-align: center;
+  padding: 20px;
+  color: #777;
+}
+
+/* RESPONSIVE */
+@media (min-width: 600px) {
+  .filters-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .calendar-controls {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .counters-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+.view-section {
+  display: none;
+}
+
+.view-section.active {
+  display: block;
+}
