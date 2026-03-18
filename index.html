@@ -33,12 +33,12 @@
 
         <div class="control-group">
           <label>Jornada</label>
-          <select id="selector-jornada"></select>
+          <select id="jornada"></select>
         </div>
 
         <div class="control-group">
           <label>Fecha</label>
-          <input type="date" id="selector-fecha">
+          <input type="date" id="fecha">
         </div>
 
         <div class="control-group buttons-inline">
@@ -62,7 +62,7 @@
 
         <div class="control-group">
           <label>Equipo</label>
-          <select id="selector-equipo">
+          <select id="equipo">
             <option value="">Todos</option>
           </select>
         </div>
@@ -83,17 +83,17 @@
       <div class="contadores">
 
         <div class="contador">
-          <span id="contador-total">0</span>
+          <span id="total">0</span>
           <p>Total</p>
         </div>
 
         <div class="contador">
-          <span id="contador-casa">0</span>
+          <span id="casa">0</span>
           <p>Casa</p>
         </div>
 
         <div class="contador">
-          <span id="contador-fuera">0</span>
+          <span id="fuera">0</span>
           <p>Fuera</p>
         </div>
 
@@ -113,10 +113,11 @@
       <div class="tabla-partidos header">
         <div>Fecha</div>
         <div>Partido</div>
-        <div>Info</div>
+        <div>Hora</div>
+        <div>Pabellón / pista</div>
       </div>
 
-      <div id="lista-partidos" class="lista-partidos"></div>
+      <div id="partidos-list" class="lista-partidos"></div>
 
     </section>
 
