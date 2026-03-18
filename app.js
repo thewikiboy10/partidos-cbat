@@ -1,234 +1,333 @@
-// ===============================
-// CONFIG
-// ===============================
-const DATA_URL = "jornadas.json";
+const DATA_URL = "./data.json";
 
-let DATA = [];
-let jornadaActual = null;
-let equipoSeleccionado = null;
+const state = {
+  semanas: [],
+  jornadaIndex: 0,
+  equipo: "",
+  fechaISO: ""
+};
 
-// ===============================
-// INIT
-// ===============================
-document.addEventListener("DOMContentLoaded", () => {
-  cargarDatos();
+const els = {};
 
-  document.getElementById("selector-jornada").addEventListener("change", onJornadaChange);
-  document.getElementById("selector-fecha").addEventListener("change", onFechaChange);
-  document.getElementById("selector-equipo")?.addEventListener("change", onEquipoChange);
-
-  document.getElementById("btn-hoy").addEventListener("click", irAHoy);
-  document.getElementById("btn-compartir").addEventListener("click", compartir);
+document.addEventListener("DOMContentLoaded", async () => {
+  cacheElements();
+  bindEvents();
+  await cargarDatos();
 });
 
-// ===============================
-// CARGA DATOS
-// ===============================
+function cacheElements() {
+  els.selectorJornada = document.getElementById("jornada");
+  els.selectorFecha = document.getElementById("fecha");
+  els.selectorEquipo = document.getElementById("equipo");
+  els.btnHoy = document.getElementById("btn-hoy");
+  els.btnCompartir = document.getElementById("btn-compartir");
+  els.listaPartidos = document.getElementById("partidos-list");
+  els.contadorTotal = document.getElementById("total");
+  els.contadorCasa = document.getElementById("casa");
+  els.contadorFuera = document.getElementById("fuera");
+}
+
+function bindEvents() {
+  if (els.selectorJornada) {
+    els.selectorJornada.addEventListener("change", onJornadaChange);
+  }
+
+  if (els.selectorFecha) {
+    els.selectorFecha.addEventListener("change", onFechaChange);
+  }
+
+  if (els.selectorEquipo) {
+    els.selectorEquipo.addEventListener("change", onEquipoChange);
+  }
+
+  if (els.btnHoy) {
+    els.btnHoy.addEventListener("click", onHoyClick);
+  }
+
+  if (els.btnCompartir) {
+    els.btnCompartir.addEventListener("click", compartir);
+  }
+}
+
 async function cargarDatos() {
   try {
-    const res = await fetch(DATA_URL);
-    const json = await res.json();
+    const response = await fetch(DATA_URL, { cache: "no-store" });
+    if (!response.ok) {
+      throw new Error(`No se pudo cargar ${DATA_URL} (${response.status})`);
+    }
 
-    DATA = json.semanas;
+    const json = await response.json();
+    state.semanas = normalizarSemanas(json);
 
+    if (!state.semanas.length) {
+      renderPartidos([]);
+      renderContadores([]);
+      return;
+    }
+
+    state.jornadaIndex = 0;
     rellenarSelectorJornadas();
     rellenarSelectorEquipos();
-
-    jornadaActual = DATA[0];
     render();
   } catch (error) {
     console.error("Error cargando datos:", error);
+    renderPartidos([]);
+    renderContadores([]);
   }
 }
 
-// ===============================
-// SELECTORES
-// ===============================
-function rellenarSelectorJornadas() {
-  const select = document.getElementById("selector-jornada");
-  select.innerHTML = "";
+function normalizarSemanas(json) {
+  const coleccion =
+    Array.isArray(json?.semanas) ? json.semanas :
+    Array.isArray(json?.jornadas) ? json.jornadas :
+    Array.isArray(json) ? json :
+    Array.isArray(json?.partidos) ? [{ titulo: "Todos los partidos", partidos: json.partidos }] :
+    [];
 
-  DATA.forEach((semana, index) => {
+  return coleccion
+    .map((semana, index) => ({
+      titulo: semana?.titulo || semana?.nombre || `Jornada ${index + 1}`,
+      inicio: semana?.inicio || "",
+      fin: semana?.fin || "",
+      partidos: Array.isArray(semana?.partidos) ? semana.partidos : []
+    }))
+    .filter((semana) => semana.partidos.length > 0);
+}
+
+function rellenarSelectorJornadas() {
+  if (!els.selectorJornada) return;
+
+  els.selectorJornada.innerHTML = "";
+
+  state.semanas.forEach((semana, index) => {
     const option = document.createElement("option");
-    option.value = index;
+    option.value = String(index);
     option.textContent = semana.titulo;
-    select.appendChild(option);
+    els.selectorJornada.appendChild(option);
   });
 
-  select.value = 0;
+  els.selectorJornada.value = String(state.jornadaIndex);
 }
 
 function rellenarSelectorEquipos() {
-  const select = document.getElementById("selector-equipo");
-  if (!select) return;
+  if (!els.selectorEquipo) return;
 
   const equipos = new Set();
 
-  DATA.forEach(semana => {
-    semana.partidos.forEach(p => {
-      equipos.add(p.equipo_cbat);
+  state.semanas.forEach((semana) => {
+    semana.partidos.forEach((partido) => {
+      if (partido?.equipo_cbat) {
+        equipos.add(partido.equipo_cbat);
+      }
     });
   });
 
-  select.innerHTML = `<option value="">Todos los equipos</option>`;
+  els.selectorEquipo.innerHTML = '<option value="">Todos</option>';
 
-  [...equipos].sort().forEach(eq => {
-    const option = document.createElement("option");
-    option.value = eq;
-    option.textContent = eq;
-    select.appendChild(option);
-  });
+  [...equipos]
+    .sort((a, b) => a.localeCompare(b, "es"))
+    .forEach((equipo) => {
+      const option = document.createElement("option");
+      option.value = equipo;
+      option.textContent = equipo;
+      els.selectorEquipo.appendChild(option);
+    });
 }
 
-// ===============================
-// EVENTOS
-// ===============================
-function onJornadaChange(e) {
-  jornadaActual = DATA[e.target.value];
+function onJornadaChange(event) {
+  state.jornadaIndex = Number(event.target.value);
   render();
 }
 
-function onFechaChange(e) {
-  const fecha = e.target.value;
-  if (!fecha) return;
+function onFechaChange(event) {
+  state.fechaISO = event.target.value;
 
-  const jornada = DATA.find(semana =>
-    fechaDentroRango(fecha, semana.inicio, semana.fin)
-  );
-
-  if (jornada) {
-    jornadaActual = jornada;
-    document.getElementById("selector-jornada").value = DATA.indexOf(jornada);
+  if (!state.fechaISO) {
     render();
+    return;
   }
-}
 
-function onEquipoChange(e) {
-  equipoSeleccionado = e.target.value;
+  const jornadaIndex = buscarJornadaPorFechaISO(state.fechaISO);
+  if (jornadaIndex !== -1 && els.selectorJornada) {
+    state.jornadaIndex = jornadaIndex;
+    els.selectorJornada.value = String(jornadaIndex);
+  }
+
   render();
 }
 
-function irAHoy() {
-  const hoy = new Date().toISOString().split("T")[0];
+function onEquipoChange(event) {
+  state.equipo = event.target.value;
+  render();
+}
 
-  const jornada = DATA.find(semana =>
-    fechaDentroRango(hoy, semana.inicio, semana.fin)
-  );
+function onHoyClick() {
+  const hoyISO = toISODate(new Date());
+  state.fechaISO = hoyISO;
 
-  if (jornada) {
-    jornadaActual = jornada;
-    document.getElementById("selector-jornada").value = DATA.indexOf(jornada);
-    render();
+  if (els.selectorFecha) {
+    els.selectorFecha.value = hoyISO;
   }
+
+  const jornadaIndex = buscarJornadaPorFechaISO(hoyISO);
+  if (jornadaIndex !== -1 && els.selectorJornada) {
+    state.jornadaIndex = jornadaIndex;
+    els.selectorJornada.value = String(jornadaIndex);
+  }
+
+  render();
 }
 
-// ===============================
-// UTILIDADES
-// ===============================
-function fechaDentroRango(fechaISO, inicioStr, finStr) {
-  const fecha = new Date(fechaISO);
-  const inicio = parseFecha(inicioStr);
-  const fin = parseFecha(finStr);
-
-  return fecha >= inicio && fecha <= fin;
-}
-
-function parseFecha(fechaStr) {
-  const [dia, mes, año] = fechaStr.split("/");
-  return new Date(`${año}-${mes}-${dia}`);
-}
-
-function formatearFechaCorta(fechaStr) {
-  const meses = ["ENE", "FEB", "MAR", "ABR", "MAY", "JUN", "JUL", "AGO", "SEP", "OCT", "NOV", "DIC"];
-  const [dia, mes] = fechaStr.split("/");
-  return `${parseInt(dia)} ${meses[parseInt(mes) - 1]}`;
-}
-
-// ===============================
-// RENDER
-// ===============================
 function render() {
-  if (!jornadaActual) return;
-
-  let partidos = jornadaActual.partidos;
-
-  if (equipoSeleccionado) {
-    partidos = partidos.filter(p => p.equipo_cbat === equipoSeleccionado);
-  }
-
-  renderPartidos(partidos);
-  renderContadores(partidos);
+  const partidosVisibles = getPartidosFiltrados();
+  renderPartidos(partidosVisibles);
+  renderContadores(partidosVisibles);
 }
 
-// ===============================
-// PARTIDOS
-// ===============================
+function getPartidosFiltrados() {
+  const jornada = state.semanas[state.jornadaIndex];
+  if (!jornada) return [];
+
+  return jornada.partidos
+    .filter((partido) => {
+      const coincideEquipo = !state.equipo || partido.equipo_cbat === state.equipo;
+      const coincideFecha = !state.fechaISO || normalizarFechaPartido(partido.fecha) === state.fechaISO;
+      return coincideEquipo && coincideFecha;
+    })
+    .sort((a, b) => ordenarPartidosPorFechaHora(a, b));
+}
+
+function ordenarPartidosPorFechaHora(partidoA, partidoB) {
+  const keyA = `${normalizarFechaPartido(partidoA.fecha)} ${normalizarHora(partidoA.hora)}`;
+  const keyB = `${normalizarFechaPartido(partidoB.fecha)} ${normalizarHora(partidoB.hora)}`;
+  return keyA.localeCompare(keyB);
+}
+
+function normalizarHora(hora) {
+  if (!hora || !/^\d{1,2}:\d{2}$/.test(hora)) return "99:99";
+  const [h, m] = hora.split(":");
+  return `${h.padStart(2, "0")}:${m}`;
+}
+
 function renderPartidos(partidos) {
-  const container = document.getElementById("lista-partidos");
-  container.innerHTML = "";
+  if (!els.listaPartidos) return;
 
-  partidos.forEach(p => {
-    const div = document.createElement("div");
-    div.className = "partido";
+  els.listaPartidos.innerHTML = "";
 
-    div.innerHTML = `
-      <div class="col-fecha">${formatearFechaCorta(p.fecha)}</div>
-      <div class="col-partido">${formatearPartido(p)}</div>
-      <div class="col-info">${p.hora} - ${p.pabellon}</div>
+  if (!partidos.length) {
+    const empty = document.createElement("div");
+    empty.className = "partido partido-empty";
+    empty.textContent = "No hay partidos para los filtros seleccionados.";
+    els.listaPartidos.appendChild(empty);
+    return;
+  }
+
+  partidos.forEach((partido) => {
+    const row = document.createElement("article");
+    row.className = "partido";
+
+    row.innerHTML = `
+      <div class="col-fecha">${formatearFecha(partido.fecha)}</div>
+      <div class="col-partido">${formatearPartido(partido)}</div>
+      <div class="col-hora">${partido.hora || "-"}</div>
+      <div class="col-pabellon">${partido.pabellon || partido.pista || "-"}</div>
     `;
 
-    container.appendChild(div);
+    els.listaPartidos.appendChild(row);
   });
 }
 
-function formatearPartido(p) {
-  let nombre = p.equipo_cbat;
+function renderContadores(partidos) {
+  if (els.contadorTotal) {
+    els.contadorTotal.textContent = String(partidos.length);
+  }
 
-  if (p.categoria) nombre += ` ${p.categoria}`;
-  if (p.grupo) nombre += ` ${p.grupo}`;
+  if (els.contadorCasa) {
+    els.contadorCasa.textContent = String(partidos.filter((p) => p.condicion === "Casa").length);
+  }
 
-  const rival = p.rival;
-
-  if (p.condicion === "Casa") {
-    return `${nombre} - ${rival}`;
-  } else {
-    return `${rival} - ${nombre}`;
+  if (els.contadorFuera) {
+    els.contadorFuera.textContent = String(partidos.filter((p) => p.condicion === "Fuera").length);
   }
 }
 
-// ===============================
-// CONTADORES
-// ===============================
-function renderContadores(partidos) {
-  const total = partidos.length;
-  const casa = partidos.filter(p => p.condicion === "Casa").length;
-  const fuera = partidos.filter(p => p.condicion === "Fuera").length;
+function formatearPartido(partido) {
+  const equipo = partido.equipo_cbat || "CBAT";
+  const rival = partido.rival || "Rival pendiente";
 
-  document.getElementById("contador-total").textContent = total;
-  document.getElementById("contador-casa").textContent = casa;
-  document.getElementById("contador-fuera").textContent = fuera;
+  return partido.condicion === "Casa"
+    ? `${equipo} - ${rival}`
+    : `${rival} - ${equipo}`;
 }
 
-// ===============================
-// COMPARTIR
-// ===============================
-function generarTextoCompartir() {
-  let texto = `📅 ${jornadaActual.titulo}\n\n`;
+function formatearFecha(fechaStr) {
+  const iso = normalizarFechaPartido(fechaStr);
+  if (!iso) return fechaStr || "-";
 
-  jornadaActual.partidos.forEach(p => {
-    texto += `• ${formatearFechaCorta(p.fecha)} | ${formatearPartido(p)} | ${p.hora}\n`;
+  const date = new Date(`${iso}T00:00:00`);
+  return date.toLocaleDateString("es-ES", {
+    day: "2-digit",
+    month: "2-digit",
+    year: "numeric"
+  });
+}
+
+function normalizarFechaPartido(fechaStr) {
+  if (!fechaStr) return "";
+
+  if (/^\d{4}-\d{2}-\d{2}$/.test(fechaStr)) {
+    return fechaStr;
+  }
+
+  const [dia, mes, anio] = fechaStr.split("/");
+  if (!dia || !mes || !anio) return "";
+
+  return `${anio.padStart(4, "0")}-${mes.padStart(2, "0")}-${dia.padStart(2, "0")}`;
+}
+
+function buscarJornadaPorFechaISO(fechaISO) {
+  return state.semanas.findIndex((semana) => {
+    const inicio = normalizarFechaPartido(semana.inicio);
+    const fin = normalizarFechaPartido(semana.fin);
+
+    if (!inicio || !fin) return false;
+    return fechaISO >= inicio && fechaISO <= fin;
+  });
+}
+
+function toISODate(date) {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
+}
+
+function generarTextoCompartir() {
+  const jornada = state.semanas[state.jornadaIndex];
+  if (!jornada) return "No hay jornada seleccionada.";
+
+  const partidos = getPartidosFiltrados();
+
+  let texto = `📅 ${jornada.titulo}\n\n`;
+  partidos.forEach((p) => {
+    texto += `• ${formatearFecha(p.fecha)} | ${formatearPartido(p)} | ${p.hora || "-"} | ${p.pabellon || p.pista || "-"}\n`;
   });
 
   return texto;
 }
 
-function compartir() {
+async function compartir() {
   const texto = generarTextoCompartir();
 
-  if (navigator.share) {
-    navigator.share({ text: texto });
-  } else {
-    navigator.clipboard.writeText(texto);
+  try {
+    if (navigator.share) {
+      await navigator.share({ text: texto });
+      return;
+    }
+
+    await navigator.clipboard.writeText(texto);
     alert("Texto copiado para compartir");
+  } catch (error) {
+    console.error("No se pudo compartir:", error);
   }
 }

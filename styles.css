@@ -1,80 +1,89 @@
-/* RESET BÁSICO */
 * {
+  box-sizing: border-box;
   margin: 0;
   padding: 0;
-  box-sizing: border-box;
-  font-family: system-ui, -apple-system, Arial, sans-serif;
+  font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
 }
 
 body {
-  background: #f4f6f8;
-  color: #1a1a1a;
+  background: #f3f5f7;
+  color: #1c1c1c;
+  line-height: 1.4;
 }
 
-/* CONTENEDOR GENERAL */
-.app {
-  max-width: 900px;
-  margin: 0 auto;
-  padding: 16px;
+.app-container {
+  width: min(980px, 100% - 24px);
+  margin: 16px auto 24px;
 }
 
-/* HEADER */
-.top-header {
-  margin-bottom: 16px;
+.app-header {
+  margin-bottom: 12px;
 }
 
-.top-header h1 {
-  font-size: 20px;
-  font-weight: 700;
+.app-header h1 {
+  font-size: 1.5rem;
 }
 
-.top-header p {
-  font-size: 13px;
-  color: #666;
+.tabs-shell {
+  width: 100%;
 }
 
-/* NAV */
-.top-nav {
-  display: flex;
+.tabs-control {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.tabs-nav {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
   gap: 8px;
-  margin-bottom: 16px;
+  margin-bottom: 12px;
 }
 
-.nav-tab {
-  flex: 1;
-  padding: 10px;
+.tab-btn {
+  border: 1px solid #d5dae1;
   border-radius: 10px;
-  border: none;
-  background: #e9edf1;
-  cursor: pointer;
+  background: #fff;
+  color: #374151;
   font-weight: 600;
+  padding: 10px 12px;
+  cursor: pointer;
+  text-align: center;
 }
 
-.nav-tab.active {
-  background: #111;
-  color: white;
+#tab-jornadas-control:checked ~ .tabs-nav label[for="tab-jornadas-control"],
+#tab-equipos-control:checked ~ .tabs-nav label[for="tab-equipos-control"] {
+  background: #1f2937;
+  color: #fff;
+  border-color: #1f2937;
 }
 
-/* PANEL GENERAL */
+.tab-panel {
+  display: none;
+}
+
+#tab-jornadas-control:checked ~ .tabs-panels #tab-jornadas,
+#tab-equipos-control:checked ~ .tabs-panels #tab-equipos {
+  display: block;
+}
+
 .panel {
-  background: white;
-  border-radius: 14px;
-  padding: 16px;
-  margin-bottom: 16px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-}
-
-.panel-header {
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 14px;
   margin-bottom: 12px;
 }
 
 .panel-header h2 {
-  font-size: 16px;
+  font-size: 1.05rem;
+  margin-bottom: 8px;
 }
 
-/* CONTROLES */
 .calendar-controls,
-.filters-grid {
+.filters,
+.contadores {
   display: grid;
   gap: 10px;
 }
@@ -86,174 +95,125 @@ body {
 }
 
 .control-group label {
-  font-size: 12px;
-  color: #666;
+  font-size: 0.82rem;
+  color: #5b6470;
+}
+
+select,
+input,
+button {
+  font: inherit;
 }
 
 select,
 input {
-  padding: 8px;
+  border: 1px solid #d5dae1;
   border-radius: 8px;
-  border: 1px solid #ddd;
+  padding: 8px 10px;
+  background: #fff;
+}
+
+.btn {
+  border: none;
+  border-radius: 8px;
+  padding: 9px 12px;
+  background: #1f2937;
+  color: #fff;
+  font-weight: 600;
+  cursor: pointer;
 }
 
 .buttons-inline {
   display: flex;
-  gap: 8px;
+  align-items: flex-end;
 }
 
-.btn {
-  flex: 1;
-  padding: 10px;
+.contadores {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.contador {
+  background: #f8fafb;
+  border: 1px solid #e7ebef;
   border-radius: 10px;
-  border: none;
-  background: #111;
-  color: white;
-  cursor: pointer;
-  font-weight: 600;
+  padding: 10px;
+  text-align: center;
 }
 
-.btn:hover {
-  opacity: 0.9;
+.contador span {
+  font-size: 1.4rem;
+  font-weight: 700;
 }
 
-/* CONTADORES */
-.counters-grid {
+.contador p {
+  color: #5b6470;
+  font-size: 0.82rem;
+}
+
+.tabla-partidos {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  grid-template-columns: 120px 1.5fr 100px 1.4fr;
   gap: 10px;
+  align-items: center;
 }
 
-.counter-card {
-  background: #f7f9fb;
-  border-radius: 12px;
-  padding: 12px;
-  text-align: center;
+.tabla-partidos.header {
+  border-bottom: 1px solid #e8edf2;
+  color: #5b6470;
+  font-size: 0.83rem;
+  font-weight: 700;
+  padding-bottom: 8px;
+  margin-bottom: 8px;
 }
 
-.counter-number {
-  font-size: 20px;
-  font-weight: bold;
-}
-
-.counter-label {
-  font-size: 12px;
-  color: #666;
-}
-
-/* PARTIDOS */
-.matches-section {
-  margin-bottom: 16px;
-}
-
-.section-header {
-  margin-bottom: 10px;
-}
-
-.matches-list {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-/* TARJETA PARTIDO */
-.match-card {
-  display: flex;
-  gap: 12px;
-  background: white;
-  padding: 12px;
-  border-radius: 12px;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.04);
-}
-
-/* FECHA */
-.match-date {
-  min-width: 60px;
-  text-align: center;
-  font-weight: bold;
-}
-
-.match-date .day {
-  font-size: 12px;
-  color: #666;
-}
-
-.match-date .date {
-  font-size: 16px;
-}
-
-/* INFO */
-.match-info h3 {
-  font-size: 14px;
-  margin-bottom: 4px;
-}
-
-.match-meta {
-  font-size: 12px;
-  color: #666;
-  margin-bottom: 6px;
-}
-
-/* TAGS */
-.match-tags {
-  display: flex;
-  gap: 6px;
-  flex-wrap: wrap;
-}
-
-.tag {
-  font-size: 11px;
-  padding: 4px 6px;
-  border-radius: 6px;
-  background: #eee;
-}
-
-.tag.home {
-  background: #d4f8d4;
-  color: #0a7a0a;
-}
-
-.tag.away {
-  background: #ffe0e0;
-  color: #a00000;
-}
-
-/* SHARE */
-.share-buttons {
+.lista-partidos {
   display: flex;
   flex-direction: column;
   gap: 8px;
 }
 
-.btn-share {
-  background: #007bff;
+.partido {
+  display: grid;
+  grid-template-columns: 120px 1.5fr 100px 1.4fr;
+  gap: 10px;
+  border: 1px solid #e7ebef;
+  border-radius: 10px;
+  padding: 10px;
+  background: #fff;
 }
 
-/* EMPTY STATE */
-.empty-state {
+.col-fecha,
+.col-hora {
+  white-space: nowrap;
+}
+
+.partido-empty {
+  grid-template-columns: 1fr;
   text-align: center;
-  padding: 20px;
-  color: #777;
+  color: #5b6470;
 }
 
-/* RESPONSIVE */
-@media (min-width: 600px) {
-  .filters-grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
+.btn-primary {
+  width: 100%;
+}
 
+@media (min-width: 700px) {
   .calendar-controls {
-    grid-template-columns: repeat(3, 1fr);
-  }
-
-  .counters-grid {
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 }
-.view-section {
-  display: none;
-}
 
-.view-section.active {
-  display: block;
+@media (max-width: 699px) {
+  .tabla-partidos.header {
+    display: none;
+  }
+
+  .partido {
+    grid-template-columns: 1fr;
+    gap: 6px;
+  }
+
+  .tabs-nav {
+    grid-template-columns: 1fr;
+  }
 }
